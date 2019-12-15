@@ -1,0 +1,33 @@
+//生成参数文件,生成因子为2,1024比特的随即素数
+dhparam -out dhparam.pem -2 1024
+
+//基于参数文件生成密钥对
+genpkey -paramfile dhparam.pem -out dhkey.pem
+
+//完整协商过程
+//生成DH密钥参数文件
+genpkey -genparam -algorithm DH -out dhparam.pem
+
+//查看密钥参数
+pkeyparam -in dhparam.pem -text
+
+//客户端基于参数文件生成密钥对
+genpkey -paramfile dhparam.pem -out ckey.pem
+
+//查看密钥对
+pkey -in ckey.pem -text -noout
+
+//客户端拆分公钥
+pkey -in ckey.pem -pubout -out ckey_pub.pem
+
+//服务器端基于参数文件生成密钥对
+genpkey -paramfile dhparam.pem -out skey.pem
+
+//服务器端拆分公钥
+pkey -in skey.pem -pubout -out skey_pub.pem
+
+//服务器端生成会话密钥
+pkeyutl -derive -inkey skey.pem -peerkey ckey_pub.pem -out data_s.txt
+
+//客户端生成会话密钥
+pkeyutl -derive -inkey ckey.pem -peerkey skey_pub.pem -out data_c.txt
