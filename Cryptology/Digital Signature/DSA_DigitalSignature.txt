@@ -1,0 +1,14 @@
+//生成参数文件
+dsaparam -out dsaparam.pem 1024
+
+//使用参数文件生成密钥对
+gendsa -out dsaprivatekey.pem dsaparam.pem
+
+//拆分出公钥
+dsa -in dsaprivatekey.pem -pubout -out dsapublickey.pem
+
+//签名文件
+dgst -sha256 -sign dsaprivatekey.pem -out signature.txt message.txt
+
+//验证签名
+dgst -sha256 -verify dsapublickey.pem -signature signature.txt message.txt
