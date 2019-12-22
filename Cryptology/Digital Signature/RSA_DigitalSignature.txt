@@ -1,0 +1,11 @@
+//生成长度为1024比特的RSA密钥对
+genrsa -out rsaprivatekey.pem 1024
+
+//分离出公钥
+rsa -in rsaprivatekey.pem -pubout -out rsapublickey.pem
+
+//使用Hash算法sha256和数字签名算法进行签名
+dgst -sha256 -sign rsaprivatekey.pem -sigopt rsa_padding_mode:pss -out signature.txt message.txt
+
+//使用公钥验证签名
+dgst -sha256 -verify rsapublickey.pem -sigopt rsa_padding_mode:pss -signature signature.txt message.txt
