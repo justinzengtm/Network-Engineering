@@ -1,0 +1,26 @@
+//获取线上证书
+$ openssl s_client -showcerts -connect www.baidu.com:443
+
+//生成CSR文件
+$ openssl req -new -sha256 -nodex -newkey rsa:2048 -keyout domain_key.pem -out domain_csr.pem
+
+//查看CSR文件
+$ openssl req -in domain_csr.pem -noout -text
+
+//CSR文件格式转换，如PEM和DER之间转换
+$ openssl req -in domain_csr.pem -out domain_csr.der -outform DER
+$ openssl req -in domain_csr.der -outform DER -out domain_csr.der -outform PEM
+
+//校验CSR文件
+$ openssl req -in myreq.pem -noout -verify -key domain_csr.pem
+
+//生成自签名证书
+$ openssl x509 -req -days 365 -in domain_csr.pem -signkey domain_key.pem -out domain_cert.pem
+
+//查看证书部分信息,例如公钥，有效期，使用者（签发的CA机构）等
+$ openssl x509 -in domain_cert.pem -pubkey
+$ openssl x509 -in domain_cert.pem -enddate
+$ openssl x509 -in domain_cert.pem -issuer
+
+//查看完整证书信息
+$ openssl x509 -in domain_cert.pem -text -noout
